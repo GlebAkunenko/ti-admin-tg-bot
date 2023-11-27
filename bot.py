@@ -5,7 +5,7 @@ from telegram.ext import Application, CommandHandler, CallbackContext
 from multiprocessing import Queue
 from model import *
 
-import config
+import config, parser
 
 users = []
 bot: Bot
@@ -46,7 +46,11 @@ async def notify_users(issue: Issue):
 	if len(users) > 0:
 		tasks = []
 		for user in users:
-			tasks.append(asyncio.create_task(bot.send_message(user, issue.info)))
+			tasks.append(asyncio.create_task(bot.send_message(
+				user,
+				parser.parse_issue_text(issue),
+				parse_mode='HTML'
+			)))
 		await asyncio.wait(tasks)
 
 

@@ -8,7 +8,7 @@ class IssueStatus(Enum):
 
 
 class Issue:
-	def __init__(self, id: datetime, info: str):
+	def __init__(self, id: datetime, info: dict):
 		self.id = id
 		self.info = info
 		self.status = IssueStatus.consideration

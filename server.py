@@ -20,7 +20,7 @@ def send_message(message):
 async def get_report():
 	# data = request.get_json()
 	# Отправка сообщения пользователю
-	send_message(parser.parse_json(request.get_json()))
+	send_message(request.get_json())
 	return "OK"
 
 
