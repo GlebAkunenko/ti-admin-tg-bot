@@ -1,11 +1,5 @@
 import json
 from datetime import datetime
-from enum import Enum
-
-class IssueStatus(Enum):
-	consideration = 0,
-	accept = 1,
-	denied = 2
 
 
 class Issue:
@@ -14,6 +8,6 @@ class Issue:
 		self.info = info
 		self.event = json.loads(info["event"].replace("'", '"').replace('\n', r'\n').replace('\t', r'\t'))
 		self.eventID = self.event["eventID"]
-		self.status = IssueStatus.consideration
-		self.message = None
-		self.id = str(hash(datetime) + 2 * hash(self.eventID))
+
+	def __hash__(self):
+		return hash((self.datetime, self.eventID))
