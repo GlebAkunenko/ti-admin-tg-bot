@@ -75,10 +75,10 @@ async def on_button_click(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 		match query.data:
 			case "OK":
 				await query.edit_message_text(parser.parse_deny(issue, query.from_user.full_name), parse_mode="HTML")
-				# tasks.append(controller.deny_issue(issue))
+				await controller.deny_issue(issue)
 			case "BAN":
 				await query.edit_message_text(parser.parse_accept(issue, query.from_user.full_name), parse_mode="HTML")
-				# tasks.append(controller.accept_issue(issue))
+				await controller.accept_issue(issue)
 		await query.answer()
 		del issues[issue_id]
 
