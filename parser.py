@@ -11,16 +11,16 @@ def format_date(dt: datetime) -> str:
 
 
 def parse_issue_text(issue: Issue) -> str:
-	data: dict[str] = issue.info
-	with open('test.txt', 'w', encoding='utf-8') as f:
-		json.dump(data, f)
-	sender = data['sender']
+	sender = issue.info['sender']
 	date = issue.id
-	issue = data['issue']
-	event = json.loads(data['event'].replace("'", '"').replace('\n', r'\n').replace('\t', r'\t'))
+	event = issue.event
+	issue = issue.info['issue']
 	f = format_field
+
+	# WARING. Button callback query matches with event id in first line of message!
 	return f"""
-Событие номер <code>{event['eventID']}</code>
+<code>{event['eventID']}</code>
+
 <b>{event['title']}</b>
 
 <b>Жалоба:</b> <i>{issue}</i>
@@ -39,3 +39,13 @@ def parse_issue_text(issue: Issue) -> str:
 
 {f(event['addressInfo'], "Информация по адресу")}
 """
+
+
+def parse_deny(issue: Issue, admin_id: str) -> str:
+	body = parse_issue_text(issue)
+	return body + "\n\n" + "✅ Жалоба игнорирована ✅" + "\n" + f"<i>Модератор: {admin_id}</i>"
+
+
+def parse_accept(issue: Issue, admin_id: str) -> str:
+	body = parse_issue_text(issue)
+	return body + "\n\n" + "❌ Пост заблокирован ❌" + "\n" + f"<i>Модератор: {admin_id}</i>"
