@@ -12,7 +12,7 @@ def format_date(dt: datetime) -> str:
 
 def parse_issue_text(issue: Issue) -> str:
 	sender = issue.info['sender']
-	date = issue.id
+	date = issue.datetime
 	event = issue.event
 	issue = issue.info['issue']
 	f = format_field
