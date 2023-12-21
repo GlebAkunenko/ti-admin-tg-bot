@@ -20,23 +20,16 @@ def parse_issue_text(issue: Issue) -> str:
 	# WARING. Button callback query matches with event id in first line of message!
 	return f"""
 <code>{event['eventID']}</code>
-
-<b>{event['title']}</b>
-
-<b>Жалоба:</b> <i>{issue}</i>
+<i>{issue}</i>
 от {sender}
 {format_date(date)}
 
-<i>Описание:</i>
+<b>{event['title']}</b>
 
 {f(event['fullDescription'], "Полное описание")}
-
 {f(event['briefDescription'], "Краткое описание")}
 
-<i>Адрес:</i>
-
-{f(event['address'], "Адрес")}
-
+<i>Адрес:</i> {f(event['address'], "Адрес")}
 {f(event['addressInfo'], "Информация по адресу")}
 """
 

@@ -10,4 +10,4 @@ class Issue:
 		self.eventID = self.event["eventID"]
 
 	def __hash__(self):
-		return hash((self.datetime, self.eventID))
+		return hash((self.eventID, self.info['issue']))

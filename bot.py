@@ -34,22 +34,23 @@ class Event:
 				)))
 		await asyncio.wait(tasks)
 
-	async def on_skip_issue(self, issue, sender: str):
+	async def on_skip_issue(self, target, sender: str):
 		tasks = []
 		for user, issue in self.user_issue_message:
-			for message in self.user_issue_message[(user, issue)]:
-				tasks.append(asyncio.create_task(bot.edit_message_text(
-					parser.parse_deny(issue, sender),
-					user,
-					message.message_id,
-					parse_mode='HTML',
-					reply_markup=None
-				)))
+			if issue == target:
+				for message in self.user_issue_message[(user, issue)]:
+					tasks.append(asyncio.create_task(bot.edit_message_text(
+						parser.parse_deny(issue, sender),
+						user,
+						message.message_id,
+						parse_mode='HTML',
+						reply_markup=None
+					)))
 		await asyncio.wait(tasks)
 
 
 events: dict[str, Event] = {}
-issues: dict[str, Issue] = {}
+issues: dict[int, Issue] = {}
 
 keyboard = [[
 	InlineKeyboardButton("✅ Пропустить ✅", callback_data="OK"),
@@ -58,14 +59,15 @@ keyboard = [[
 
 
 async def check_new_reports(context: CallbackContext):
-	if not message_queue.empty():
+	if not message_queue.empty() and len(users) > 0:
 		message = message_queue.get()
 		issue = Issue(message["date"], message["data"])
 		if issue.eventID not in events:
 			events[issue.eventID] = Event(issue.eventID)
-		events[issue.eventID].issues.append(issue)
-		issues[issue.eventID] = issue
-		await notify_users(issue)
+		if hash(issue) not in issues:
+			events[issue.eventID].issues.append(issue)
+			issues[hash(issue)] = issue
+			await notify_users(issue)
 
 
 async def start(update: Update, context: CallbackContext):
@@ -111,7 +113,9 @@ async def notify_users(issue: Issue):
 
 async def on_button_click(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 	query = update.callback_query
-	issue_id = query.message.text.split('\n')[0]
+	event_id = query.message.text.split('\n')[0]
+	issue_text = query.message.text.split('\n')[1]
+	issue_id = hash((event_id, issue_text))
 	if issue_id not in issues:
 		await query.answer("Ошибка")
 	else:

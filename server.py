@@ -13,13 +13,10 @@ messages_queue: Queue
 
 def send_message(message):
 	messages_queue.put({"date": datetime.now(), "data": message})
-	# messages_queue.append(message)
 
 
 @app.route(config.main_url, methods=['POST'])
 async def get_report():
-	# data = request.get_json()
-	# Отправка сообщения пользователю
 	send_message(request.get_json())
 	return "OK"
 
